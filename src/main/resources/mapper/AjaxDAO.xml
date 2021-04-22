@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.stuckyi.domain.AjaxDAO">
+   <!-- 댓글 목록 -->
+   <select id="selectComment" 
+      resultType="com.project.stuckyi.domain.CommentDTO">
+      <![CDATA[ 
+         SELECT
+               cmt_uid cmtuid, 
+               cmt_content cmtcontent,
+               cmt_regdate cmtregdate,
+               brd_uid bUid,
+               user_id userid
+            FROM 
+               (SELECT ROWNUM AS RNUM, T.* FROM 
+                  (SELECT * FROM board_comment ORDER BY cmt_uid DESC) T) 
+            WHERE 
+               RNUM >= #{from} AND RNUM < (#{from} + #{pageRows}) AND brd_uid = #{brduid}
+               
+            ]]>
+   </select>
+   
+   <select id="countComment" resultType="int">
+      SELECT count(*) FROM board_comment 
+   </select>   
+   
+   <!-- 댓글작성 -->
+   <insert id="insertComment" flushCache="true" parameterType="com.project.stuckyi.domain.CommentDTO">
+      INSERT INTO board_comment
+         (cmt_uid, user_id, cmt_content, brd_uid, cmt_regdate)
+      VALUES
+         (board_comment_seq.nextval, #{userid}, #{cmtContent}, #{brdUid}, SYSDATE)
+   </insert>
+   
+   <!-- 댓글 수정 -->
+    <update id="updateComment" flushCache="true" parameterType="com.project.stuckyi.domain.CommentDTO">
+      UPDATE board_comment 
+      SET cmt_content = #{cmtContent} 
+      WHERE cmt_uid = #{cmtUid}
+   </update>
+     
+     <!-- 댓글 삭제-->
+      <delete id="deleteCommentByUid" flushCache="true">
+         DELETE FROM board_comment
+         WHERE cmt_uid = #{cmtUid}
+      </delete>
+      
+      <!-- 후기 목록 (페이징) : page, pageRows -->
+   <select id="selectBoardFromRow" 
+      resultType="com.project.stuckyi.domain.BoardDTO">
+      <![CDATA[  
+      SELECT
+         brd_uid brdUid, 
+         brd_title brdTitle, 
+         brd_content brdContent, 
+         brd_viewcnt brdViewcnt, 
+         brd_regdate brdRegdate,
+         brd_type brdType,
+         user_id userId          
+      FROM 
+         (SELECT ROWNUM AS RNUM, T.* FROM 
+            (SELECT * FROM main_board ORDER BY brd_uid DESC) T) 
+      WHERE 
+         RNUM >= #{from} AND RNUM < (#{from} + #{pageRows})
+      ]]>   
+   </select>
+
+
+   <select id="countMainBoard" resultType="int">
+      SELECT count(*) FROM main_board 
+   </select>   
+
+   <!-- 후기 글 읽기 -->
+   <select id="selectMainByUid" 
+      resultType="com.project.stuckyi.domain.BoardDTO">
+      SELECT 
+         brd_uid brdUid, 
+         brd_title brdTitle, 
+         brd_content brdContent, 
+         brd_viewcnt brdViewcnt, 
+         brd_regdate brdRegdate,
+         brd_type brdType,
+         user_id userId       
+      FROM main_board 
+      WHERE brd_uid=#{uid}
+   </select>
+   
+   <!-- 후기 조회수 증가 -->
+   <update id="incMainViewCnt" flushCache="true">
+      UPDATE main_board
+      SET brd_viewcnt = brd_viewcnt + 1 
+      WHERE brd_uid = #{param1}
+   </update>
+   
+   <!-- 후기 글작성 -->
+   <insert id="insertMain" flushCache="true" parameterType="com.project.stuckyi.domain.BoardDTO">
+      INSERT INTO main_board
+         (brd_uid, brd_title, brd_content, brd_type, user_id, brd_regdate)
+      VALUES
+         (main_board_seq.nextval, #{brdTitle}, #{brdContent}, #{brdType}, #{userId}, SYSDATE)
+   </insert>
+
+   <!-- 후기 글 수정 -->   
+    <update id="updateMain" flushCache="true" parameterType="com.project.stuckyi.domain.BoardDTO">
+      UPDATE main_board 
+      SET brd_title = #{brdTitle}, brd_content = #{brdContent}, brd_type=#{brdType}, brd_regdate=SYSDATE
+      WHERE brd_uid = #{brdUid}
+   </update>
+
+     <delete id="deleteMain" flushCache="true"
+        parameterType="java.util.ArrayList">
+        
+        DELETE FROM main_board
+        WHERE brd_uid = #{uid} 
+     </delete>
+     
+<select id="selectTransFromRow"
+      resultType="com.project.stuckyi.domain.TransWriteDTO">
+      <![CDATA[ 
+         SELECT
+               t_res_uid transUid, 
+               t_res_addr transAddr,
+               t_res_date transDate,
+               t_res_time transTime,
+               t_res_cmt transComment,
+               t_res_name transName,
+               t_res_wdate wDate,
+               user_id userId
+            FROM 
+             (SELECT ROWNUM AS RNUM, T.* FROM 
+             (SELECT * FROM t_reserve ORDER BY t_res_uid DESC) T) 
+          WHERE 
+             RNUM >= #{from} AND RNUM < (#{from} + #{pageRows})
+            ]]>
+   </select>
+
+   <select id="transCountAll" resultType="int">
+      SELECT count(*) FROM t_reserve
+   </select>
+
+   <!-- /view.ajax : 글 읽기(예약 목록) -->
+   <select id="selectTransByUid"
+      resultType="com.project.stuckyi.domain.TransWriteDTO">
+
+      SELECT
+         t_res_uid transUid, 
+            t_res_addr transAddr,
+            t_res_date transDate,
+            t_res_time transTime,
+            t_res_cmt transComment,
+            t_res_name transName,
+            t_res_wdate wDate,
+            user_id userId
+      FROM t_reserve
+      WHERE t_res_uid=#{transUid}
+   </select>
+
+   <!-- 예약 확인 -->
+   <select id="selectTrans" resultType="com.project.stuckyi.domain.TransWriteDTO">
+      SELECT
+         t_res_uid transUid, 
+            t_res_addr transAddr,
+            t_res_date transDate,
+            t_res_time transTime,
+            t_res_cmt transComment,
+            t_res_name transName,
+            t_res_wdate wDate,
+            user_id userId
+      FROM 
+         t_reserve
+      ORDER BY
+         t_res_uid DESC      
+   </select>
+
+   <!-- /writeOk.ajax : 글 작성(예약하기) parameter: DTO -->
+   <insert id="insertTrans" flushCache="true"
+      parameterType="com.project.stuckyi.domain.TransWriteDTO">
+      INSERT INTO t_reserve
+      (t_res_uid, t_res_name, t_res_addr, t_res_time, t_res_cmt, t_res_date, user_id, t_res_wdate)
+      VALUES
+      (t_res_uid_seq.nextval,
+      #{transName}, #{transAddr}, #{transTime}, #{transComment}, #{transDate}, #{userId}, SYSDATE)
+   </insert>
+
+   <delete id="deleteTransByUid" flushCache="true">
+      DELETE FROM t_reserve WHERE t_res_uid = #{transUid}
+   </delete>
+
+   <!-- /deleteOk.ajax : 글삭제(예약 삭제) parameter : uid(들)
+   <delete id="deleteByUid" flushCache="true"
+      parameterType="java.util.ArrayList">
+
+      DELETE FROM t_reserve
+      WHERE t_res_uid IN (
+      <foreach collection="array" item="item" index="index"
+         separator=",">
+         ${item}
+      </foreach>
+      )
+   </delete>
+    -->
+    
+   <delete id="deleteByUid" flushCache="true">
+      DELETE FROM t_reserve WHERE t_res_uid = #{transUid}
+   </delete>
+   
+   <!-- 병원 예약목록 (페이징) : page, pageRows -->
+   <select id="selectHosFromRow" 
+      resultType="com.project.stuckyi.domain.HosDTO">
+      <![CDATA[  
+      SELECT 
+         h_res_uid hosUid, 
+         h_res_date resDate,
+         h_res_time hosTime, 
+         h_res_type hosType, 
+         h_res_title hosTitle,
+         h_res_name hosName, 
+         h_res_ph hosPh,
+         user_id userId,
+         h_res_hdate hosDate
+      FROM 
+         (SELECT ROWNUM AS RNUM, T.* FROM 
+            (SELECT * FROM c_reserve ORDER BY h_res_uid DESC) T) 
+      WHERE 
+         RNUM >= #{from} AND RNUM < (#{from} + #{pageRows})
+      ]]>
+   </select>
+   
+   <select id="hosCountAll" resultType="int">
+      SELECT count(*) FROM c_reserve
+   </select>
+   
+   <!-- 병원 예약 확인 -->
+   <select id="selectHos" resultType="com.project.stuckyi.domain.HosDTO">
+      SELECT
+         h_res_uid hosUid,
+         h_res_date resDate,
+         h_res_time hosTime,
+         h_res_type hosType,
+         h_res_title hosTitle,
+         h_res_name hosName,
+         h_res_ph hosPh,
+         user_id userId,
+         h_res_hdate hosDate
+      FROM 
+         c_reserve
+      ORDER BY
+         h_res_uid DESC      
+   </select>
+   
+   <!-- 병원 페이징쪽 ajax -->
+   <select id="selectHosByUid"
+      resultType="com.project.stuckyi.domain.HosDTO">
+      SELECT
+      h_res_uid hosUid,
+      h_res_date resDate,
+      h_res_time hosTime,
+      h_res_type hosType,
+      h_res_title hosTitle,
+      h_res_name hosName,
+      h_res_ph hosPh,
+      user_id userId,
+      h_res_hdate hosDate
+      FROM c_reserve
+      WHERE h_res_uid=#{hosUid}
+   </select>
+
+   <!-- 병원 예약등록 -->
+   <insert id="insertHos" flushCache="true"
+      parameterType="com.project.stuckyi.domain.HosDTO">
+      INSERT INTO c_reserve
+      (h_res_uid, h_res_name, h_res_hdate, h_res_time, h_res_type, h_res_title,
+      h_res_date, h_res_ph, user_id)
+      VALUES
+      (h_res_uid_seq.nextval, #{hosName}, SYSDATE, #{hosTime}, #{hosType}, #{hosTitle}, #{resDate},
+      #{hosPh}, #{userId})
+   </insert>
+
+   <!-- 예약 삭제 ajax
+   <delete id="deleteHosByUid" flushCache="true"
+      parameterType="com.project.stuckyi.domain.HosDTO">
+
+      DELETE FROM c_reserve
+      WHERE h_res_uid IN (
+      <foreach collection="array" item="item" index="index"
+         separator=",">
+         #{item}
+      </foreach>
+      )
+   </delete>
+    -->
+   <delete id="deleteHosByUid" flushCache="true">
+      DELETE FROM c_reserve WHERE h_res_uid = #{hosUid}
+   </delete>
+
+     <!-- Join & ADMIN -->
+   <!-- 회원 목록 (페이징) : page, pageRows -->
+   <select id="selectJoinFromRow"
+      resultType="com.project.stuckyi.domain.JoinDTO">
+     <![CDATA[  
+      SELECT
+            user_id "id", 
+            user_pw "pw",
+            user_ph "ph",
+            user_email "email",
+            user_name "name",
+            user_gender "gender",
+            enabled "enabled"    
+         FROM 
+            (SELECT ROWNUM AS RNUM, T.* FROM 
+               (SELECT * FROM join ORDER BY user_id DESC) T) 
+         WHERE 
+            RNUM >= #{from} AND RNUM < (#{from} + #{pageRows})
+         ]]>
+   </select>
+   <select id="selectJoinAll"
+      resultType="com.project.stuckyi.domain.JoinDTO">
+     <![CDATA[  
+      SELECT
+            user_id "id", 
+            user_pw "pw",
+            user_ph "ph",
+            user_email "email",
+            user_name "name",
+            user_gender "gender",
+            enabled "enabled"           
+         FROM 
+            join ORDER BY user_id DESC
+         ]]>
+   </select>
+   <!-- /view.ajax : 글 읽기(회원 목록) -->
+   <select id="selectJoinByUid"
+      resultType="com.project.stuckyi.domain.JoinDTO">
+      SELECT
+      user_id "id",
+      user_pw "pw",
+      user_ph "ph",
+      user_email "email",
+      user_name "name",
+      user_gender "gender",
+      enabled "enabled"
+      FROM join
+      WHERE user_id=#{id}
+   </select>
+   
+   <select id="joinCountAll" resultType="int">
+      SELECT count(*) FROM join 
+   </select>
+
+   <!-- /writeOk.ajax : 글 작성(회원등록) parameter: DTO -->
+   <insert id="insertJoin" flushCache="true"
+      parameterType="com.project.stuckyi.domain.JoinDTO">
+      INSERT INTO join
+      (user_id, user_pw, user_ph, user_email, user_name, user_gender, enabled)
+      VALUES
+      (#{param1}, #{param2}, #{param3}, #{param4},
+      #{param5}, #{param6}, #{param7})
+   </insert>
+   
+   <!-- 회원정보 수정 -->
+   <update id="updateJoin" flushCache="true"
+      parameterType="com.project.stuckyi.domain.JoinDTO">
+      UPDATE
+         join
+      SET
+         user_pw = #{pw},
+         user_email = #{email},
+         user_ph = #{ph}
+      WHERE
+         user_id = #{id}
+   </update>
+
+
+   <!-- /deleteOk.ajax : 글삭제(회원삭제) parameter : uid(들) -->
+   <delete id="deleteJoinByUid" flushCache="true"
+      parameterType="java.util.ArrayList">
+
+      DELETE FROM join
+      WHERE user_id IN (
+      <foreach collection="array" item="item" index="index"
+         separator=",">
+         ${item}
+      </foreach>
+      )
+
+   </delete>
+    
+    <select id="selectUser" resultType="com.project.stuckyi.domain.JoinDTO">
+    	SELECT * FROM join WHERE user_id=#{param1}
+    </select>
+    
+    <select id="getAuthList" resultType="com.project.stuckyi.domain.AuthDTO">
+    	SELECT user_auth FROM ADMIN_AUTH WHERE USER_ID = #{param1}
+    </select>
+    
+    <insert id="giveAuth" flushCache="true" parameterType="com.project.stuckyi.domain.AuthDTO">
+    	INSERT INTO ADMIN_AUTH VALUES(#{param1}, #{param2})
+    </insert>
+    
+</mapper>
