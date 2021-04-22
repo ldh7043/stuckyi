@@ -142,7 +142,7 @@
       }
 </script>
          
-         <div><h1>회원목록 확인</h1><br></div>
+         <div><h1>회원정보</h1><br></div>
        <table class="table" id="joinJSON"></table>
        <script>
          var request_url = "http://localhost:8033/stuckyi/join/<%=(String)request.getAttribute("id") %>";
@@ -238,7 +238,7 @@
             var row = jsonObj.list;
             var i;
             
-            var table="<tr><th>예약자명</th><th>탑승장소</th><th>예약시간</th><th>취소(삭제)</th></tr>";
+            var table="<tr><th>예약자명</th><th>탑승장소</th><th>예약날짜</th><th>취소(삭제)</th></tr>";
             for (i = 0; i < row.length; i++) {
                if(row[i].userId.trim() == "<%=(String)request.getAttribute("id") %>") {
                    table += "<tr>";
@@ -279,7 +279,7 @@
             var row = jsonObj.hoslist;
             var i;
             
-            var table="<tr><th>예약자명</th><th>예약 병원명</th><th>예약 시간</th><th>예약 취소</th></tr>";
+            var table="<tr><th>예약자명</th><th>예약 병원명</th><th>예약날짜</th><th>예약 취소</th></tr>";
             for (i = 0; i < row.length; i++) { 
                 if(row[i].userId.trim() == "<%=(String)request.getAttribute("id") %>") {
                    table += "<tr>";

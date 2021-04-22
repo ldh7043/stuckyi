@@ -62,7 +62,7 @@ CREATE TABLE c_reserve
 	h_res_type varchar2(20) NOT NULL,
 	h_res_title varchar2(40) NOT NULL,
 	h_res_name varchar2(40) NOT NULL,
-	h_res_ph varchar2(10),
+	h_res_ph varchar2(20),
 	h_res_hdate date DEFAULT SYSDATE,
 	user_id varchar2(20) NOT NULL,
 	PRIMARY KEY (h_res_uid)

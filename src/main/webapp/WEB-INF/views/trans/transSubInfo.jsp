@@ -34,11 +34,32 @@
 <title>장애인편의시설알리미</title>
 </head>
 <style>
-	#subshow {
-	   font-size: 17px;
-	   margin: 35px 0 0 35%;
-	   line-height: 40px;
-	}
+   #subshow {
+      font-size: 17px;
+      margin: 0px auto;
+      line-height: 40px;
+      width:450px;
+   }
+   #demoXML{
+      text-align: center;
+   }
+   #gaepo{
+    width:450px;
+    height: 400px;
+    
+   }
+.subContainer{
+padding-top:50px;
+   padding-bottom:100px;
+   padding-left: 200px;
+  box-shadow: 0 5px 25px 0 rgba(214, 215, 216, 0.6);}
+#subTitle{
+	text-align: left;
+	margin-left: 300px;
+   margin-bottom: 30px;
+   color: #5c768d;
+   font-family: 'Binggrae';
+}
 </style>
 <body>
    <!-- ======= Header ======= -->
@@ -123,10 +144,14 @@
 
 <!-- ======= About Us Section ======= -->
       <section id="about" class="about">
-         <div class="container">
+         <div class="subContainer">
+         <h2 id="subTitle">지하철 상세정보</h2>
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-   <div class="row"><p id="subshow" style="text-align:center"></p></div>
-
+   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c391516a386c40148a51ae48a3479f77&libraries=services"></script>
+   <div class="row">
+   <img id="gaepo" src="<%=request.getContextPath() %>/resources/img/gaepo.jpg">
+   <div class="row1" style="margin-left:30px;"><p id="subshow" style="text-align:left; margin-top:20px; font-size:1.7em; width:500px" ></p>
+   </div></div>
 <!-- api -->
 <br><br>
 <div id="subMain">
@@ -153,13 +178,38 @@
           var cnt = 0;
           $(xmlDOM).find("row").each(function(){
              document.getElementById("subshow").innerHTML = 
+            //$(this).find("STATION_IMAGE").text() +
             "<br> 노선명칭 : " + $(this).find("LINE_NAME").text() + 
             "<br> 역명칭 : " + $(this).find("STATION").text() +
             "<br> 엘레베이터 사용여부 : " + $(this).find("USEYN").text() + 
-            "<br> 전화번호 : " + $(this).find("TELNO_INFO").text()
+            "<br> 전화번호 : <br>" + $(this).find("TELNO_INFO").text()
           });
           $("#demoXML").html(table);
       }  
+      
+      function setMapMarker(x, y) {
+          
+          var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+         mapOption = { 
+             center: new kakao.maps.LatLng(y, x), // 지도의 중심좌표
+             level: 3 // 지도의 확대 레벨
+         };
+
+        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+         
+         
+         // 마커가 표시될 위치입니다 
+         var markerPosition  = new kakao.maps.LatLng(y, x); 
+
+         // 마커를 생성합니다
+         var marker = new kakao.maps.Marker({
+             position: markerPosition
+         });
+
+         // 마커가 지도 위에 표시되도록 설정합니다
+         marker.setMap(map);
+
+      }
       
       
    </script>

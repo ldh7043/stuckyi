@@ -37,6 +37,7 @@
 <c:if test = "${not empty errors}">
 <script>
 alert("${errors}");
+history.back();
 </script>
 </c:if>
 <body>

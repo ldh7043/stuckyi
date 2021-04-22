@@ -218,7 +218,7 @@ function transChkDelete(transUid){
             var row = jsonObj.list;
             var i;
             
-            var table="<tr><th>예약자명</th><th>탑승장소</th><th>예약시간</th><th>취소(삭제)</th></tr>";
+            var table="<tr><th>예약자명</th><th>탑승장소</th><th>예약날짜</th><th>취소(삭제)</th></tr>";
             for (i = 0; i < row.length; i++) {
                if(row[i].userId.trim() == user_id.trim()) {
                    table += "<tr>";
@@ -259,7 +259,7 @@ function transChkDelete(transUid){
             var row = jsonObj.hoslist;
             var i;
             
-            var table="<tr><th>예약자명</th><th>예약 병원명</th><th>예약 시간</th><th>예약 취소</th></tr>";
+            var table="<tr><th>예약자명</th><th>예약 병원명</th><th>예약날짜</th><th>예약 취소</th></tr>";
             for (i = 0; i < row.length; i++) { 
                 if(row[i].userId.trim() == user_id.trim()) {
                    table += "<tr>";
