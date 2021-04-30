@@ -21,4 +21,5 @@
 	HTML5, CSS, Javascript, jQuery, JSON, Ajax, BootStrap4.0, Java, Spring, Spring Security, Maven, Github, JSTL, JDBC, Oracle 11, Apache Tomcat 9.0, Lombok, MyBatis, MySQL, MariaDB
 
 버전관리 : Git-Hub (https://github.com/1029hera/stuckyi)
+
 발표영상: https://www.youtube.com/watch?v=SMQHnsY2gC4&list=PLedGoSru79493-00o_i35ujkkHls3Zvjk&index=3 
